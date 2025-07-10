@@ -1,17 +1,58 @@
-/* Global Reset & Base Styles */
+/* 🌿 Global Reset & Base Styles */
 body {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', sans-serif;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   background-color: #f4f6f5;
   color: #333;
 }
 
+/* 🌼 App Container Overlay */
+.app-container {
+  background-color: rgba(255, 255, 255, 0.94);
+  min-height: 100vh;
+  padding: 2rem;
+  box-sizing: border-box;
+  background-repeat: no-repeat;
+}
+
+/* 🌺 Header */
+header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* 🌞 Overlay for header text readability */
+.header-overlay {
+  background-color: rgba(255, 255, 255, 0.85);
+  display: inline-block;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.header-overlay h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  color: #2e7d32;
+}
+
+.header-overlay .subtitle {
+  margin: 0.5rem 0 0;
+  font-size: 1.1rem;
+  color: #555;
+}
+
+/* 🌱 Form Styles */
 form {
   background-color: #ffffff;
   padding: 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   max-width: 600px;
   margin: 2rem auto;
   display: flex;
@@ -39,22 +80,24 @@ form button {
   color: white;
   border: none;
   cursor: pointer;
-  transition: 0.3s;
+  transition: background-color 0.3s ease;
 }
 
 form button:hover {
-  background-color: #45a049;
+  background-color: #388e3c;
 }
 
-/* Plant List Grid */
+/* 🪴 Plant List Grid */
 .plant-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
+  gap: 1.5rem;
   padding: 1rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-/* Individual Plant Card */
+/* 🌿 Individual Plant Card */
 .plant-card {
   background: #ffffff;
   border: 1px solid #e0e0e0;

@@ -1,45 +1,53 @@
+// src/App.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import AddPlantForm from './components/AddPlantForm';
 import PlantList from './components/PlantList';
-import bg from './assets/bg-plants.png'; // ✅ your background image
+import bg from './assets/bg-plants.png'; // Your custom background image
+import './App.css';
 
 function App() {
   const [plants, setPlants] = useState([]);
 
   useEffect(() => {
     const fetchPlants = async () => {
-      const res = await axios.get('http://localhost:5000/api/plants');
-      setPlants(res.data);
+      try {
+        const res = await axios.get('http://localhost:5000/api/plants');
+        setPlants(res.data);
+      } catch (error) {
+        console.error('🌱 Error fetching plants:', error);
+      }
     };
+
     fetchPlants();
   }, []);
 
   const handleAdd = (newPlant) => {
-    setPlants([...plants, newPlant]);
+    setPlants((prev) => [...prev, newPlant]);
   };
 
   return (
     <div
+      className="app-container"
       style={{
         backgroundImage: `url(${bg})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-        minHeight: '100vh',
-        padding: '2rem',
       }}
     >
-      <h1 style={{ textAlign: 'center', color: '#2e7d32' }}>
-        🌿 South African PlantDB
-      </h1>
-      <AddPlantForm onAdd={handleAdd} />
-      <PlantList plants={plants} />
+      <header>
+        <div className="header-overlay">
+          <h1>🌿 South African PlantDB</h1>
+          <p className="subtitle">
+            A digital archive of traditional botanical knowledge
+          </p>
+        </div>
+      </header>
+
+      <main>
+        <AddPlantForm onAdd={handleAdd} />
+        <PlantList plants={plants} />
+      </main>
     </div>
   );
 }
 
 export default App;
-
-
-

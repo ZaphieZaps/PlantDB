@@ -1,76 +1,116 @@
+// src/components/AddPlantForm.js
 import React, { useState } from 'react';
-import axios from 'axios';
+import './AddPlantForm.css';
 
-const AddPlantForm = ({ onAdd }) => {
-  const [name, setName] = useState('');
-  const [species, setSpecies] = useState('');
-  const [description, setDescription] = useState('');
-  const [region, setRegion] = useState('');
-  const [uses, setUses] = useState('');
-  const [tradition, setTradition] = useState('');
-  const [commercial, setCommercial] = useState('');
-  const [citation, setCitation] = useState('');
-  const [file, setFile] = useState(null);
+function AddPlantForm() {
+  const [formData, setFormData] = useState({
+    plantName: '',
+    species: '',
+    description: '',
+    region: '',
+    medicinalUses: '',
+    traditionalKnowledge: '',
+    commercialApplications: '',
+    citationLink: '',
+    image: null,
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+    setFormData({ ...formData, image: e.target.files[0] });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('species', species);
-    formData.append('description', description);
-    formData.append('region', region);
-    formData.append('uses', uses); // will be split in backend
-    formData.append('tradition', tradition);
-    formData.append('commercial', commercial);
-    formData.append('citation', citation);
-    if (file) formData.append('image', file);
+    const form = new FormData();
+    Object.entries(formData).forEach(([key, value]) => {
+      form.append(key, value);
+    });
 
     try {
-      const res = await axios.post('http://localhost:5000/api/plants', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+      const response = await fetch('http://localhost:5000/api/plants', {
+        method: 'POST',
+        body: form,
       });
-      onAdd(res.data);
 
-      // Reset form fields
-      setName('');
-      setSpecies('');
-      setDescription('');
-      setRegion('');
-      setUses('');
-      setTradition('');
-      setCommercial('');
-      setCitation('');
-      setFile(null);
-
-      alert('🌿 Plant added successfully!');
-    } catch (err) {
-      console.error('Error adding plant:', err);
-      alert('Something went wrong while adding the plant.');
+      if (response.ok) {
+        alert('🌱 Plant added successfully!');
+        // Clear form
+        setFormData({
+          plantName: '',
+          species: '',
+          description: '',
+          region: '',
+          medicinalUses: '',
+          traditionalKnowledge: '',
+          commercialApplications: '',
+          citationLink: '',
+          image: null,
+        });
+      } else {
+        throw new Error('Server error');
+      }
+    } catch (error) {
+      console.error('❌ Submission error:', error);
+      alert('Something went wrong. Please try again.');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="text" placeholder="Plant Name" value={name} onChange={e => setName(e.target.value)} required />
-      <input type="text" placeholder="Species" value={species} onChange={e => setSpecies(e.target.value)} required />
-      <textarea placeholder="Description" value={description} onChange={e => setDescription(e.target.value)} />
-      <input type="text" placeholder="Region (e.g. Eastern Cape)" value={region} onChange={e => setRegion(e.target.value)} />
-      <input type="text" placeholder="Medicinal Uses (comma-separated)" value={uses} onChange={e => setUses(e.target.value)} />
-      <textarea placeholder="Traditional Knowledge / Notes" value={tradition} onChange={e => setTradition(e.target.value)} />
-      <input type="text" placeholder="Commercial Applications" value={commercial} onChange={e => setCommercial(e.target.value)} />
-      <input type="url" placeholder="Citation Link (optional)" value={citation} onChange={e => setCitation(e.target.value)} />
-      <input type="file" accept="image/*" onChange={handleFileChange} />
-      <button type="submit">Add Plant</button>
+    <form className="plant-form" onSubmit={handleSubmit} encType="multipart/form-data">
+      <div className="form-group">
+        <label>🌿 Plant Name</label>
+        <input type="text" name="plantName" value={formData.plantName} onChange={handleChange} required />
+      </div>
+
+      <div className="form-group">
+        <label>🔬 Species</label>
+        <input type="text" name="species" value={formData.species} onChange={handleChange} />
+      </div>
+
+      <div className="form-group">
+        <label>📝 Description</label>
+        <textarea name="description" value={formData.description} onChange={handleChange} />
+      </div>
+
+      <div className="form-group">
+        <label>📍 Region (e.g. Eastern Cape)</label>
+        <input type="text" name="region" value={formData.region} onChange={handleChange} />
+      </div>
+
+      <div className="form-group">
+        <label>🌱 Medicinal Uses (comma-separated)</label>
+        <input type="text" name="medicinalUses" value={formData.medicinalUses} onChange={handleChange} />
+      </div>
+
+      <div className="form-group">
+        <label>📚 Traditional Knowledge Notes</label>
+        <textarea name="traditionalKnowledge" value={formData.traditionalKnowledge} onChange={handleChange} />
+      </div>
+
+      <div className="form-group">
+        <label>🏢 Commercial Applications</label>
+        <textarea name="commercialApplications" value={formData.commercialApplications} onChange={handleChange} />
+      </div>
+
+      <div className="form-group">
+        <label>🔗 Citation Link (optional)</label>
+        <input type="text" name="citationLink" value={formData.citationLink} onChange={handleChange} />
+      </div>
+
+      <div className="form-group">
+        <label>📸 Upload Image</label>
+        <input type="file" name="image" onChange={handleFileChange} />
+      </div>
+
+      <button type="submit">➕ Add Plant</button>
     </form>
   );
-};
+}
 
 export default AddPlantForm;
 

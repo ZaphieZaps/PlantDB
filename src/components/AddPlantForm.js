@@ -2,79 +2,76 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 const AddPlantForm = ({ onAdd }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    species: '',
-    description: '',
-    image: null
-  });
+  const [name, setName] = useState('');
+  const [species, setSpecies] = useState('');
+  const [description, setDescription] = useState('');
+  const [region, setRegion] = useState('');
+  const [uses, setUses] = useState('');
+  const [tradition, setTradition] = useState('');
+  const [commercial, setCommercial] = useState('');
+  const [citation, setCitation] = useState('');
+  const [file, setFile] = useState(null);
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === 'image') {
-      setFormData((prev) => ({ ...prev, image: files[0] }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('species', species);
+    formData.append('description', description);
+    formData.append('region', region);
+    formData.append('uses', uses); // will be split in backend
+    formData.append('tradition', tradition);
+    formData.append('commercial', commercial);
+    formData.append('citation', citation);
+    if (file) formData.append('image', file);
+
     try {
-      const data = new FormData();
-      data.append('name', formData.name);
-      data.append('species', formData.species);
-      data.append('description', formData.description);
-      if (formData.image) {
-        data.append('image', formData.image);
-      }
-
-      await axios.post('http://localhost:5000/plants', data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+      const res = await axios.post('http://localhost:5000/api/plants', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
+      onAdd(res.data);
 
-      onAdd();
-      setFormData({ name: '', species: '', description: '', image: null });
+      // Reset form fields
+      setName('');
+      setSpecies('');
+      setDescription('');
+      setRegion('');
+      setUses('');
+      setTradition('');
+      setCommercial('');
+      setCitation('');
+      setFile(null);
+
+      alert('🌿 Plant added successfully!');
     } catch (err) {
-      console.error('❌ Error adding plant:', err.response?.data || err.message);
+      console.error('Error adding plant:', err);
+      alert('Something went wrong while adding the plant.');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} encType="multipart/form-data" className="form">
-      <h2>🌸 Add a Plant</h2>
-      <input
-        type="text"
-        name="name"
-        placeholder="Name"
-        value={formData.name}
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="text"
-        name="species"
-        placeholder="Species"
-        value={formData.species}
-        onChange={handleChange}
-      />
-      <textarea
-        name="description"
-        placeholder="Description"
-        value={formData.description}
-        onChange={handleChange}
-      />
-      <input
-        type="file"
-        name="image"
-        accept="image/*"
-        onChange={handleChange}
-      />
+    <form onSubmit={handleSubmit}>
+      <input type="text" placeholder="Plant Name" value={name} onChange={e => setName(e.target.value)} required />
+      <input type="text" placeholder="Species" value={species} onChange={e => setSpecies(e.target.value)} required />
+      <textarea placeholder="Description" value={description} onChange={e => setDescription(e.target.value)} />
+      <input type="text" placeholder="Region (e.g. Eastern Cape)" value={region} onChange={e => setRegion(e.target.value)} />
+      <input type="text" placeholder="Medicinal Uses (comma-separated)" value={uses} onChange={e => setUses(e.target.value)} />
+      <textarea placeholder="Traditional Knowledge / Notes" value={tradition} onChange={e => setTradition(e.target.value)} />
+      <input type="text" placeholder="Commercial Applications" value={commercial} onChange={e => setCommercial(e.target.value)} />
+      <input type="url" placeholder="Citation Link (optional)" value={citation} onChange={e => setCitation(e.target.value)} />
+      <input type="file" accept="image/*" onChange={handleFileChange} />
       <button type="submit">Add Plant</button>
     </form>
   );
 };
 
 export default AddPlantForm;
+
 

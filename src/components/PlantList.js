@@ -3,14 +3,21 @@ import React from 'react';
 const PlantList = ({ plants }) => {
   return (
     <div className="plant-list">
-      <h2>🌱 Your Plants</h2>
-      {plants.map((plant, index) => (
-        <div className="plant-card" key={index}>
-          {plant.image && (
-            <img src={`http://localhost:5000${plant.image}`} alt={plant.name} className="plant-image" />
+      {plants.map((plant) => (
+        <div key={plant._id} className="plant-card">
+          {plant.imageUrl && (
+            <img src={plant.imageUrl} alt={plant.name} className="plant-image" />
           )}
-          <h3>{plant.name} — <em>{plant.species}</em></h3>
-          <p>{plant.description}</p>
+          <h3>{plant.name}</h3>
+          <p><strong>Species:</strong> {plant.species}</p>
+          <p><strong>Region:</strong> {plant.region}</p>
+          <p><strong>Description:</strong> {plant.description}</p>
+          <p><strong>Uses:</strong> {plant.uses?.join(', ')}</p>
+          <p><strong>Traditional Notes:</strong> {plant.tradition}</p>
+          <p><strong>Commercial Uses:</strong> {plant.commercial}</p>
+          {plant.citation && (
+            <p><a href={plant.citation} target="_blank" rel="noreferrer">📚 View Citation</a></p>
+          )}
         </div>
       ))}
     </div>
